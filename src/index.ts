@@ -1,9 +1,7 @@
-import 'dotenv/config';
 import * as pinoModule from 'pino';
 import pretty from 'pino-pretty';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import pkg from '../package.json' with { type: 'json' };
 
 // Ensure compatibility between CommonJS and ESM imports
 const pinoFactory = ((pinoModule as any).default ?? pinoModule) as (
@@ -22,7 +20,7 @@ export enum LogLevel {
 }
 
 // Default service name from package.json
-const DEFAULT_SERVICE_NAME = pkg.name ?? 'ads-mqtt';
+const DEFAULT_SERVICE_NAME = '@juntu/logger';
 
 // Pretty-print stream for development only
 const prettyStream = pretty({
