@@ -1,0 +1,23 @@
+{
+    "name": "@juntu/logger",
+    "version": "0.0.1",
+    "main": "./dist/index.js",
+    "type": "module",
+    "scripts": {
+        "build": "tsc",
+        "test": "vitest"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "@tsconfig/node22": "^22.0.1",
+        "@types/node": "^22.10.2",
+        "typescript": "^5.7.2",
+        "vitest": "^2.1.8"
+    },
+    "dependencies": {
+        "pino": "^9.6.0"
+    }
+}

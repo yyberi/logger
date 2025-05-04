@@ -1,0 +1,24 @@
+// tsconfig.json
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "lib": ["es2023"],
+    "module": "nodenext",
+    "target": "es2022",
+    "strict": true,
+    "esModuleInterop": true,          // <— varmistettu
+    "allowSyntheticDefaultImports": true, 
+    "skipLibCheck": true,
+    "moduleResolution": "node16",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "rootDir": "src",                   // koko projektikansio
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
