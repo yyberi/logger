@@ -3,6 +3,7 @@ import pretty from 'pino-pretty';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+
 // Ensure compatibility between CommonJS and ESM imports
 const pinoFactory = ((pinoModule as any).default ?? pinoModule) as (
   opts?: import('pino').LoggerOptions,
@@ -39,7 +40,8 @@ const prettyStream = pretty({
 });
 
 export class Logger {
-  private static instance?: Logger;
+  // Multiple root instances keyed by serviceName
+  private static instances: Record<string, Logger> = {};
   private logger: import('pino').Logger;
   private children: Logger[] = [];
 
@@ -47,41 +49,27 @@ export class Logger {
    * Private constructor: param is either a pino.Logger (child) or a serviceName string (root).
    */
   private constructor(param?: string | import('pino').Logger) {
-    
     if (param && typeof param !== 'string') {
-      // Child logger, use provided pino.Logger
+      // Child logger
       this.logger = param;
     } else {
-      // Root logger, determine service name
+      // Root logger
       const serviceName = typeof param === 'string' ? param : DEFAULT_SERVICE_NAME;
-      // Normalize NODE_ENV
-      const envRaw = process.env.NODE_ENV || '';
-      const env = envRaw.trim().toLowerCase();
-
+      const env = (process.env.NODE_ENV || '').trim().toLowerCase();
       if (env === 'production') {
-        // Production: use transport config to write JSON logs to file only, no console
+        // Production: file transport only
         const prodConfig = {
           transport: {
-            targets: [
-              {
-                target: 'pino/file',
-                level: 'info',
-                options: {
-                  destination: path.join(__dirname, '../logs/app.log'),
-                  mkdir: true,
-                  sync: false,
-                }
+            targets: [{
+              target: 'pino/file', level: 'info', options: {
+                destination: path.join(__dirname, '../logs/app.log'), mkdir: true, sync: false
               }
-            ]
+            }]
           },
           level: 'info',
           timestamp: () => `,"timestamp":"${new Date().toISOString()}"`,
           messageKey: 'message',
-          base: {
-            env: process.env.NODE_ENV,
-            version: process.env.npm_package_version,
-            service: serviceName,
-          }
+          base: { env: process.env.NODE_ENV, version: process.env.npm_package_version, service: serviceName }
         } as import('pino').LoggerOptions;
         this.logger = pinoFactory(prodConfig);
       } else {
@@ -95,23 +83,21 @@ export class Logger {
   }
 
   /**
-   * Get or create the root singleton logger. First call may provide serviceName.
+   * Return or create a root logger for the given serviceName (or default).
    */
   public static getInstance(serviceName?: string): Logger {
-    if (!Logger.instance) {
-      Logger.instance = new Logger(serviceName);
-    } else {
-      // console.debug('[Logger] getInstance returning existing instance');
+    const name = serviceName || DEFAULT_SERVICE_NAME;
+    if (!Logger.instances[name]) {
+      Logger.instances[name] = new Logger(name);
     }
-    return Logger.instance;
+    return Logger.instances[name];
   }
 
   /**
-   * Create a child logger for a module/component: pass { name: 'moduleName' }.
+   * Create a child logger: pass { name: 'moduleName' }.
    */
   public child(bindings: import('pino').Bindings): Logger {
     const moduleName = (bindings as any).name;
-    // Remove original name key and replace with module
     const { name, ...rest } = bindings as any;
     const childBindings = { ...rest, module: moduleName };
     const childLogger = this.logger.child(childBindings);
@@ -125,31 +111,12 @@ export class Logger {
     this.children.forEach(child => child.setLogLevel(level));
   }
 
-  public fatal(message: string, ...args: unknown[]): void {
-    this.logger.fatal(message, ...args);
-  }
-  public error(message: string, ...args: unknown[]): void {
-    this.logger.error(message, ...args);
-  }
-  public warn(message: string, ...args: unknown[]): void {
-    this.logger.warn(message, ...args);
-  }
-  public info(message: string, ...args: unknown[]): void {
-    this.logger.info(message, ...args);
-  }
-  public debug(message: string, ...args: unknown[]): void {
-    this.logger.debug(message, ...args);
-  }
+  public fatal(msg: string, ...args: unknown[]): void { this.logger.fatal(msg, ...args); }
+  public error(msg: string, ...args: unknown[]): void { this.logger.error(msg, ...args); }
+  public warn(msg: string, ...args: unknown[]): void { this.logger.warn(msg, ...args); }
+  public info(msg: string, ...args: unknown[]): void { this.logger.info(msg, ...args); }
+  public debug(msg: string, ...args: unknown[]): void { this.logger.debug(msg, ...args); }
 }
 
-// Callable default export for ease of use
-export type LoggerFunction = ((serviceName?: string) => Logger) & {
-  child: (bindings: import('pino').Bindings) => Logger;
-  setLogLevel: (level: LogLevel) => void;
-};
-
-const LoggerFn = ((serviceName?: string) => Logger.getInstance(serviceName)) as LoggerFunction;
-LoggerFn.child = (bindings) => Logger.getInstance().child(bindings);
-LoggerFn.setLogLevel = (level) => Logger.getInstance().setLogLevel(level);
-
-export default LoggerFn;
+// Default export: function to get a logger for a serviceName
+export default (serviceName?: string) => Logger.getInstance(serviceName);
