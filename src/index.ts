@@ -10,7 +10,9 @@ const pinoFactory = ((pinoModule as any).default ?? pinoModule) as (
   stream?: import('pino').DestinationStream
 ) => import('pino').Logger;
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const logDir = process.env.LOG_DIR ?? path.join(process.cwd(), 'logs');
+const logFile = path.join(logDir, 'app.log');
 
 export enum LogLevel {
   FATAL = 'fatal',
@@ -62,7 +64,7 @@ export class Logger {
           transport: {
             targets: [{
               target: 'pino/file', level: 'info', options: {
-                destination: path.join(__dirname, '../logs/app.log'), mkdir: true, sync: false
+                destination: logFile, mkdir: true, sync: false
               }
             }]
           },
