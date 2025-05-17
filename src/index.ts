@@ -1,7 +1,6 @@
 import * as pinoModule from 'pino';
 import pretty from 'pino-pretty';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 
 // Ensure compatibility between CommonJS and ESM imports
