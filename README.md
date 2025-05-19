@@ -70,3 +70,6 @@ authLogger.debug('Checking user credentials');
 * Production logs are written asynchronously; buffered logs may be lost if the process exits abruptly.
 * The timestamp override yields ISO-formatted strings; no further configuration needed.
 
+## License
+
+This project is licensed under the [MIT License](./LICENSE). Feel free to use and modify as needed.
