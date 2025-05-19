@@ -1,0 +1,9 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+      "rootDir": "./",               // Testit käännetään erikseen
+      "outDir": "../dist/test"            // Testit menevät omaan kansioon
+    },
+    "include": ["./**/*"]
+  }
+  
