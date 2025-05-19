@@ -1,4 +1,4 @@
-# @juntu/logger
+# @yyberi/logger
 
 A lightweight wrapper around [pino](https://www.npmjs.com/package/pino) for structured, level-based logging in both development and production environments.
 
