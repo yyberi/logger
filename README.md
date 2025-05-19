@@ -19,9 +19,9 @@ npm install @yyberi/logger
 ## Usage
 
 ```ts
-import getLogger, { LogLevel } from '@juntu/logger';
+import getLogger, { LogLevel } from '@yyberi/logger';
 
-// Root logger (defaults to service name '@juntu/logger')
+// Root logger (defaults to service name '@yyberi/logger')
 const logger = getLogger();
 
 // Optionally set a specific service name:
@@ -69,6 +69,9 @@ authLogger.debug('Checking user credentials');
 * The `logs` directory will be created automatically if it does not exist.
 * Production logs are written asynchronously; buffered logs may be lost if the process exits abruptly.
 * The timestamp override yields ISO-formatted strings; no further configuration needed.
+
+### Keywords
+log, logging, logger, pino, pino-pretty
 
 ## License
 

@@ -22,7 +22,7 @@ export enum LogLevel {
 }
 
 // Default service name from package.json
-const DEFAULT_SERVICE_NAME = '@juntu/logger';
+const DEFAULT_SERVICE_NAME = '@yyberi/logger';
 
 // Pretty-print stream for development only
 const prettyStream = pretty({

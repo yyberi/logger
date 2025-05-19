@@ -1,8 +1,16 @@
 {
     "name": "@yyberi/logger",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "main": "./dist/index.js",
     "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/yyberi/logger.git"
+    },
+    "bugs": {
+        "url": "https://github.com/yyberi/logger/issues"
+    },
+    "homepage": "https://github.com/yyberi/logger#readme",
     "files": [
         "dist",
         "README.md",
